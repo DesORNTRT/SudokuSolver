@@ -1,3 +1,6 @@
+import java.util.ArrayList;
+import java.util.List;
+
 public class SudokuSolver {
 
     static int N = 9;
@@ -8,7 +11,6 @@ public class SudokuSolver {
         //horizontal checken
         for(int i =0;i< field.length;i++){
             if(field[x][i]==num){
-                //System.out.println("F1");
                 return false;
             }
         }
@@ -16,7 +18,6 @@ public class SudokuSolver {
         //vertikal checken
         for(int i =0;i< field.length;i++){
             if(field[i][y]==num){
-                //System.out.println("F2");
                 return false;
             }
         }
@@ -26,7 +27,6 @@ public class SudokuSolver {
         for(int i = 0; i < 3; i++){
             for(int j = 0; j < 3; j++){
                 if(field[i+startx][j+starty]==num){
-                    //System.out.println("F3");
                     return false;
                 }
             }
@@ -75,6 +75,53 @@ public class SudokuSolver {
         return false;
     }
 
+    public static boolean inputIsValid(int[][] field){
+        List<Integer> list=new ArrayList<>();
+        //horizontal
+        for(int i=0;i<field.length;i++){
+            for(int j =0;j< field.length;j++){
+                if(field[i][j]!=0) {
+                    if (list.contains(field[i][j])) {
+                        return false;
+                    }
+                }
+                list.add(field[i][j]);
+            }
+            list.clear();
+        }
+        //vertikal
+        for(int i=0;i< field.length;i++){
+            for(int j =0;j<field.length;j++){
+                if(field[j][i]!=0) {
+                    if (list.contains(field[j][i])) {
+                        return false;
+                    }
+                    list.add(field[j][i]);
+                }
+            }
+            list.clear();
+        }
+
+        //block
+        for(int i=0;i< field.length-3;i+=3){
+            for(int j=0;j< field.length-3;j+=3){
+                for(int k=0;k<3;k++){
+                    for(int l=0;l<3;l++){
+                        if(field[i+k][j+l]!=0){
+                            if(list.contains(field[i+k][j+l])){
+                                return false;
+                            }
+                            list.add(field[i][j]);
+                        }
+                    }
+                }
+                list.clear();
+            }
+        }
+
+        return true;
+    }
+
     public static void main(String[] args) {
         int[][] field = {
                 { 8, 0, 0, 0, 0, 0, 0, 0, 0 },
@@ -91,10 +138,12 @@ public class SudokuSolver {
 
         printField(field);
         System.out.println("");
-        if(solve(field,0,0))
-            printField(field);
-        else
-            System.out.println("Es gibt keine Lösung für dieses Sudoku");
+        if(inputIsValid(field)) {
+            if (solve(field, 0, 0))
+                printField(field);
+        }
+        else System.out.println("Es gibt keine Lösung für dieses Sudoku");
 
-    }
+
+        }
 }
